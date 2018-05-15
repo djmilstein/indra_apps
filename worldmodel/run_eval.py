@@ -16,6 +16,8 @@ from indra.statements import Influence, Concept
 from indra.assemblers import CAGAssembler, PysbAssembler
 from indra.explanation.model_checker import ModelChecker
 from indra.preassembler.hierarchy_manager import HierarchyManager
+from indra.sources.eidos.eidos_reader import EidosReader
+from text_comparison import words_within_words
 
 # This is a mapping to MITRE's 10 document IDs from our file names
 ten_docs_map = {
@@ -236,6 +238,7 @@ def align_entities(stmts_by_ns, match='exact'):
                     if grounding and ns == 'EIDOS':
                         grounding = grounding[0][0]
                     text = agent.db_refs.get('TEXT')
+                    text = text.encode('latin-1', errors='ignore').decode('latin-1')
                     if text and grounding:
                         agents[text] = grounding
         return agents
@@ -249,30 +252,56 @@ def align_entities(stmts_by_ns, match='exact'):
                 matches.append((element1, element2))
         return matches
 
-    def eidos_match(s1, s2):
-        return eidos.stringSimilarity(s1, s2)
-
     grounding_by_ns = {}
     for ns, stmts in stmts_by_ns.items():
         grounding_by_ns[ns] = get_grounding_map(ns, stmts)
     matches = []
     for ns1, ns2 in itertools.combinations(grounding_by_ns.keys(), 2):
         if match == 'exact':
-            matched = [(x, x) for x in (set(grounding_by_ns[ns1].keys()) &
+            matches = [(x, x) for x in (set(grounding_by_ns[ns1].keys()) &
                                         set(grounding_by_ns[ns2].keys()))]
+        elif match == 'words_within_words':
+            for s1, s2 in itertools.product(
+                    list(grounding_by_ns[ns1].keys()),
+                    list(grounding_by_ns[ns2].keys())):
+                print('MOO', s1)
+
+                if words_within_words(s1, s2):
+                    t = [s1, s2, ]
+                    if len(t) != 2:
+                        import ipdb;ipdb.set_trace()
+                    assert(len(t) == 2)
+                    matches.append(t)
+            # matches = list(set(matches))
+            print('Point A:', len(matches))
+
         elif match == 'fuzzy':
-            matched = fuzzy_list_match(list(grounding_by_ns[ns1].keys()),
+            matches = fuzzy_list_match(list(grounding_by_ns[ns1].keys()),
                                        list(grounding_by_ns[ns2].keys()))
         else:
-            for s1, s2 in itertools.combinations(grounding_by_ns[ns1], grounding_by_ns[ns2]):
-                if eidos_match(s1, s2) > 0.8:
+            reader = EidosReader()
+            for s1, s2 in itertools.product(
+                    list(grounding_by_ns[ns1].keys()),
+                    list(grounding_by_ns[ns2].keys())):
+                match_score = reader.string_similarity(s1, s2)
+                if  match_score > 0.05:
                     matches.append((s1, s2))
             matches = list(set(matches))
-        for match1, match2 in matched:
+        x = 0
+        print('Point B:', len(matches))
+        matched = []
+        for t in matched:
+            # print(x, 'Hello', t)
+            if len(t) != 2:
+                import ipdb;ipdb.set_trace()
+            assert len(t) == 2, t
+            match1 = t[0]
+            match2 = t[1]
             val = (ns1, match1, grounding_by_ns[ns1][match1],
                    ns2, match2, grounding_by_ns[ns2][match2])
-            matches.append(val)
-    return matches
+            matched.append(val)
+            x += 1
+    return matched
 
 
 def dump_alignment(matches, fname):
@@ -362,7 +391,7 @@ if __name__ == '__main__':
                        key=lambda x: int(x.split('_')[0]))
 
     # Or rather get just the IDs ot the 10 documents for preliminary analysis
-    docnames = list(ten_docs_map.keys())
+    # docnames = list(ten_docs_map.keys())
 
     # Gather input from sources
     eidos_stmts = read_eidos(docnames)
@@ -381,8 +410,8 @@ if __name__ == '__main__':
     sofia_stmts = read_sofia('sofia/SOFIA_output_debugging.xlsx')
 
     # Align ontologies
-    #matches_eb = align_entities({'EIDOS': eidos_stmts, 'BBN': bbn_stmts},
-    #                            match='fuzzy')
+    matches_eb = align_entities({'EIDOS': eidos_stmts, 'BBN': bbn_stmts_new},
+                                match='words_within_words')
     #dump_alignment(matches_eb, 'EIDOS_BBN_alignment.csv')
     #matches_ec = align_entities({'EIDOS': eidos_stmts, 'CWMS': cwms_stmts},
     #                             match='eidos')
