@@ -1,5 +1,5 @@
 from indra.sources import eidos, bbn, cwms, sofia
-from indra.util import _require_python3
+from indra.util import _require_python3, write_unicode_csv
 import os
 import glob
 import math
@@ -17,7 +17,11 @@ from indra.assemblers import CAGAssembler, PysbAssembler
 from indra.explanation.model_checker import ModelChecker
 from indra.preassembler.hierarchy_manager import HierarchyManager
 from indra.sources.eidos.eidos_reader import EidosReader
-from text_comparison import words_within_words
+from text_comparison import *
+import collections
+
+#TODO: control for fcase
+#TODO: probably don't want to restrict within a single sentence
 
 # This is a mapping to MITRE's 10 document IDs from our file names
 ten_docs_map = {
@@ -164,9 +168,9 @@ def read_cwms_sentences(text_dict, read=True):
             block_txt = '.\n'.join(t.capitalize() for t in block)
             block_txt = preprocess_cwms(block_txt)
             if len(blocks) == 1:
-                ekb_fname = 'cwms/%s_sentences.ekb' % doc
-            else:
-                ekb_fname = 'cwms/%s_sentences_%d.ekb' % (doc, j)
+                ekb_fname = 'cwms/cwms_sentences_04012018/%s_sentences.ekb' % doc
+            else: #TODO: these documents
+                ekb_fname = 'cwms/cwms_sentences_04012018/%s_sentences_%d.ekb' % (doc, j)
             if os.path.exists(ekb_fname):
                 with open(ekb_fname, 'r') as fh:
                     cp = cwms.process_ekb(fh.read())
@@ -228,17 +232,62 @@ def read_cwms_full(fnames, read=True):
     return stmts
 
 
+def align_entities_within_sentence(stmts_by_ns):
+    # Create a mapping from a sentence to the statements with that sentence.
+    # Sometimes a reader map pick out a subset of a sentence to process - we'll
+    # group together sentences and sentences fragments by the longest sentence
+    # fragment with common words.
+    sentence_to_statements = collections.defaultdict(list)
+    for ns in stmts_by_ns:
+        for statement in stmts_by_ns[ns]:
+            assert(len(statement.evidence) == 1)
+            ev = statement.evidence[0]
+            sentence = strip_punctuation(ev.text)
+            match = get_entry_with_common_subsequence(sentence_to_statements.keys(), sentence)
+
+            if match is None:
+                sentence_to_statements[sentence].append(statement)
+            elif len(sentence) > len(match):
+                common_statements = list(sentence_to_statements[match])
+                common_statements.append(statement)
+                del sentence_to_statements[match]
+                sentence_to_statements[sentence] = common_statements
+            else:
+                sentence_to_statements[match].append(statement)
+
+    matched = []
+    for sentence in sentence_to_statements:
+        sentence_stmts_by_ns = collections.defaultdict(list)
+        for statement in sentence_to_statements[sentence]:
+            assert(len(statement.evidence) == 1)
+            ev = statement.evidence[0]
+            sentence_stmts_by_ns[ev.source_api].append(statement)
+
+        if len(sentence_stmts_by_ns.keys()) > 1:
+            matched_sent = align_entities(sentence_stmts_by_ns,
+                                          'words_within_words')
+            matched.extend(matched_sent)
+            import ipdb;ipdb.set_trace()
+    return matched
+
+
+def normalize_key(text):
+    text = text.encode('latin-1', errors='ignore').decode('latin-1')
+    text = text.lower()
+    return text
+
 def align_entities(stmts_by_ns, match='exact'):
     def get_grounding_map(ns, stmts):
         agents = {}
+        texts = {}
         for st in stmts:
             for agent in st.agent_list():
                 if agent is not None:
-                    grounding = agent.db_refs.get(ns)
-                    if grounding and ns == 'EIDOS':
+                    grounding = agent.db_refs.get(ns.upper())
+                    if grounding and ns.upper() == 'EIDOS':
                         grounding = grounding[0][0]
                     text = agent.db_refs.get('TEXT')
-                    text = text.encode('latin-1', errors='ignore').decode('latin-1')
+                    text = normalize_key(text)
                     if text and grounding:
                         agents[text] = grounding
         return agents
@@ -255,30 +304,40 @@ def align_entities(stmts_by_ns, match='exact'):
     grounding_by_ns = {}
     for ns, stmts in stmts_by_ns.items():
         grounding_by_ns[ns] = get_grounding_map(ns, stmts)
-    matches = []
+
+    matched_table = []
     for ns1, ns2 in itertools.combinations(grounding_by_ns.keys(), 2):
+        matches = []
         if match == 'exact':
+            assert(False)
             matches = [(x, x) for x in (set(grounding_by_ns[ns1].keys()) &
                                         set(grounding_by_ns[ns2].keys()))]
         elif match == 'words_within_words':
+            rows = []
+            f = open('match.txt', 'w')
             for s1, s2 in itertools.product(
                     list(grounding_by_ns[ns1].keys()),
                     list(grounding_by_ns[ns2].keys())):
-                print('MOO', s1)
 
-                if words_within_words(s1, s2):
+                in_common, _ = words_within_words(s1, s2)
+                if in_common:
+                    assert(s1 in grounding_by_ns[ns1])
+                    assert(s2 in grounding_by_ns[ns2])
                     t = [s1, s2, ]
-                    if len(t) != 2:
-                        import ipdb;ipdb.set_trace()
                     assert(len(t) == 2)
                     matches.append(t)
-            # matches = list(set(matches))
-            print('Point A:', len(matches))
+                    row = [s1, grounding_by_ns[ns1][s1],
+                           s2, grounding_by_ns[ns2][s2]]
+                    rows.append(row)
+            
+            write_unicode_csv('match.csv', rows)
+
 
         elif match == 'fuzzy':
             matches = fuzzy_list_match(list(grounding_by_ns[ns1].keys()),
                                        list(grounding_by_ns[ns2].keys()))
         else:
+            assert(False)
             reader = EidosReader()
             for s1, s2 in itertools.product(
                     list(grounding_by_ns[ns1].keys()),
@@ -287,21 +346,24 @@ def align_entities(stmts_by_ns, match='exact'):
                 if  match_score > 0.05:
                     matches.append((s1, s2))
             matches = list(set(matches))
-        x = 0
-        print('Point B:', len(matches))
-        matched = []
-        for t in matched:
-            # print(x, 'Hello', t)
-            if len(t) != 2:
-                import ipdb;ipdb.set_trace()
+        print('NS1:', ns1, 'NS2:', ns2)
+        for t in matches:
             assert len(t) == 2, t
             match1 = t[0]
             match2 = t[1]
+
+            grounding1 = grounding_by_ns[ns1][match1]
+            grounding2 = grounding_by_ns[ns2][match2]
+
+            exclude = ['event/Factor']
+            if grounding1 in exclude or grounding2 in exclude:
+                continue
+            if match1 not in grounding_by_ns[ns1] or match2 not in grounding_by_ns[ns2]:
+                import ipdb;ipdb.set_trace()
             val = (ns1, match1, grounding_by_ns[ns1][match1],
                    ns2, match2, grounding_by_ns[ns2][match2])
-            matched.append(val)
-            x += 1
-    return matched
+            matched_table.append(val)
+    return matched_table
 
 
 def dump_alignment(matches, fname):
@@ -410,11 +472,15 @@ if __name__ == '__main__':
     sofia_stmts = read_sofia('sofia/SOFIA_output_debugging.xlsx')
 
     # Align ontologies
-    matches_eb = align_entities({'EIDOS': eidos_stmts, 'BBN': bbn_stmts_new},
-                                match='words_within_words')
-    #dump_alignment(matches_eb, 'EIDOS_BBN_alignment.csv')
-    #matches_ec = align_entities({'EIDOS': eidos_stmts, 'CWMS': cwms_stmts},
-    #                             match='eidos')
+    #matches_eb = align_entities({'EIDOS': eidos_stmts, 'BBN': bbn_stmts_new},
+    #                            match='words_within_words')
+    #dump_alignment(matches_eb, 'EIDOS_BBN_alignment.csv'),
+    #matches_ec = align_entities_within_sentence({'EIDOS': eidos_stmts, 'CWMS': cwms_stmts,
+    matches_ec = align_entities({'EIDOS': eidos_stmts, 'CWMS': cwms_stmts}, match="words_within_words")
+        # 'BBN': bbn_stmts_new}, match='fuzzy') #words_within_words')
+        #'BBN': bbn_stmts_new, 'CWMS': cwms_stmts}, match='words_within_words')
+    write_unicode_csv('foo.csv', matches_ec)
+                                 
     #dump_alignment(matches_ec, 'EIDOS_CWMS_alignment.csv')
     #matches_bc = align_entities({'BBN': bbn_stmts, 'CWMS': cwms_stmts},
     #                            match='fuzzy')
