@@ -1,0 +1,522 @@
+conservation
+sustainable use
+afforestation
+agroforestry
+biodiversity conservation
+climate change mitigation
+reforestation
+climate change adaptation
+forest management
+water management
+management forest
+pollution
+deforestation
+soil erosion
+desertification
+greenhouse gas emission
+contaminant
+climate change
+ghg emission
+contamination
+crisis
+emergency
+species
+forest
+environment
+habitat
+life
+ecology
+ecosystem service
+flora
+mangrove
+tree species
+plant forest
+shrub
+tree
+plant
+vegetation
+fuelwood
+animal
+bird
+insect
+turtle
+oyster
+elephant
+mammal
+chick
+duck
+crustacean
+buffalo
+tsetse
+shark
+area
+food
+resource
+land
+water
+biodiversity
+sea
+ecosystem
+river
+forest area
+pond
+rain
+water resource
+forestry sector
+wetland
+nAtuRAl ReSouRceS
+mineral
+Convention Biological diversity
+area forest
+forest sector
+lake
+forest land
+freshwater
+surface water
+air
+charcoal
+sand
+plant resource food
+wildlife
+groundwater
+mountain
+mt
+iron
+water body
+flood
+flash flood
+drought
+hurricane
+extreme winds
+cyclone
+tornado
+precipitation
+rain
+rainfall
+snow
+conflict
+war
+fighting
+disarmament
+infighting
+civil unrest
+genocide
+clash
+raid
+migration
+immigration
+displacement
+refugee migration
+emigration
+access
+humanitarian response
+humanitarian aid
+assistance
+humanitarian support
+intervention
+rehabilitation
+poverty alleviation
+vaccine
+famine
+hunger
+starvation
+death
+mortality
+morbidity
+decease
+village
+world
+district
+province
+zone
+territory
+city
+capital
+States
+nation
+regional
+republic
+town
+headquarters
+settlement
+subregion
+continent
+several countries
+municipality
+county
+urban
+most countries
+developed countries
+sub-region
+nation
+country
+state
+geopolitical entity
+nation-state
+feet
+meter
+inch
+yard
+mile
+kilometer
+acre
+hectare
+ton
+tonne
+gram
+kilogram
+pound
+ounce
+liter
+gallon
+phosphorous
+organic matter
+soil
+pesticide
+cultivation
+harvesting
+post-harvest
+food system
+farmer organization
+department agriculture
+aquaculture sector
+food product
+Peoples food system
+farming
+harvest
+rice production
+farming system
+agriculture organization
+soil fertility
+planting
+fertility
+horticulture
+tillage
+investment agriculture
+wheat
+corn
+maize
+rice
+sorghum
+barley
+flax
+grain
+beans
+sugar
+flour
+tea
+leaf vegetables
+groundnuts
+cultivar
+potato
+bean
+cassava
+banana
+coffee
+soybean
+groundnut
+oilseed
+bamboo
+tomato
+mango
+cereal
+cocoa
+coconut
+rubber
+onion
+tea
+tobacco
+crop
+vegetable
+rice
+feed
+food crop
+legume
+grain
+tuber
+infestation
+armyworm
+insect
+swarm
+locust
+fungus
+plant nematodes
+weeds
+volunteer plants
+pests
+mice
+midges
+slugs
+pest
+health
+healthy
+nutrition
+diet
+vitamin a
+HIV
+malaraia
+diabetes
+anemia
+hiv
+anaemia
+hiv/aids
+outbreak
+nitrogen fertilizer
+inorganic fertilizers
+potting composts
+nitrogen potassium fertilizers
+superphosphate
+magnesium fertilizers
+nitrate fertilizers
+biofertilizers
+potash fertilizers
+fish manure
+guano
+nitrophosphates
+composts
+fertilizer
+localized irrigation
+capillary irrigation
+sprinkler irrigation
+furrow irrigation
+drip fertigation
+surface irrigation
+runoff irrigation
+fertigation
+wastewater irrigation
+watering
+rotation irrigation
+flood irrigation
+trickle irrigation
+centre pivot irrigation
+subsurface irrigation
+irrigation system
+irrigation
+trucking
+shipping
+courier
+transportation
+driving
+bus
+air travel
+delivery
+road
+highways
+bridge
+infrastructure
+energy
+border
+building
+monument
+utilities
+electric plant
+desalination
+water treatment facility
+sewage plant
+drainage ditch
+airport
+seaport
+marina
+harbour
+reservoir
+sanitation
+dam
+watershed
+canal
+livelihood
+farming
+fishery
+food production
+agriculture
+industry
+commerce
+workplace
+trade
+work
+job
+career
+opportunity
+employment
+agribusiness
+literacy
+education
+school
+price
+cost
+expense
+credit
+budget
+cash
+market
+domestic markets
+capital market
+street markets
+interest rate
+investment
+stipend
+government spending
+subsidy
+finance
+GDP
+economy
+inflation
+depreciation
+biofuel
+technology
+e-mail
+email
+network
+solution
+transportation
+internet
+information system
+electricity
+software
+website
+vehicle
+web site
+machine
+transport
+database
+innovation
+biofuel
+technology transfer
+networking
+mechanization
+biotechnology
+machinery
+radio
+programming
+livelihood
+income
+household income
+take home pay
+net profit
+profit
+earning
+revenue
+investment
+poverty
+ngo
+agriculture organization UNITED NATIONS
+agency
+secretariat
+industry
+world bank
+council
+representative
+organisation
+association
+institution
+participant
+Governing body
+party
+un agency
+member States
+executive committee
+establishment
+agriculture organization UNITED NATIONS rome
+development agency
+constitution
+foundation
+development partner
+codex Alimentarius commission
+Member Nations
+iotc secretariat
+fao Regional office
+finance committee
+fao headquarters
+government agency
+agriculture sector
+committee
+ministry
+board
+working GROUP
+contract party
+department
+government
+regulation
+governance
+surveillance
+security
+commission
+law
+meeting
+session
+discussion
+legislation
+workshop
+conference
+partnership
+decision
+agreement
+rule
+agenda
+convention
+recommendation
+stability
+compliance
+tax
+enforcement
+census
+action plan
+policy
+development
+management
+production
+organization
+programme
+Programme Work
+development programme
+Development Goals
+jurisdiction
+management plan
+rights
+decision-making
+welfare
+communities
+people group
+households
+families
+villages
+people
+community
+family
+ethnic group
+population
+food security
+food access
+food availability
+nutrition
+nutrition security
+food insecurity
+food gap
+malnutrition
+undernutrition
+undernourishment
+stunting
+wasting
+wasting
+harvest
+lean season
+planting season
+sowing season
+summer
+winter
+fall
+spring
+dry season
+rainy season
+monsoon season
+January
+February
+March
+April
+May
+June
+July
+August
+September
+October
+November
+December

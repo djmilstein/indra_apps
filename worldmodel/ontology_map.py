@@ -50,7 +50,7 @@ def get_eidos_grounding(noun):
             is_match, _ = words_within_words(noun, agent.db_refs['TEXT'])
             if is_match:
                 if len(agent.db_refs['EIDOS']) > 0:
-                    matches.add(agent.db_refs['EIDOS'][0][0])
+                    matches.add(agent.db_refs['EIDOS'][0])
     return matches
 
 
@@ -79,7 +79,8 @@ if __name__ == '__main__':
 
     readers = ['EIDOS', 'CWMS']
     matches = collections.defaultdict(dict)
-    for noun in brown_nouns:
+    nn = ['animal', 'dog']
+    for noun in nn:  #brown_nouns:
         grounding_eidos = get_grounding('EIDOS', noun)
         grounding_cwms = get_grounding('CWMS', noun)
 
@@ -92,4 +93,4 @@ if __name__ == '__main__':
     for match in matches:
         el = list(matches[match]['EIDOS'])
         cl = list(matches[match]['CWMS'])
-        print(match, el[0], cl[0])
+        print('\t'.join([match, str(el[0]), str(cl[0]) ]))
